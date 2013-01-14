@@ -1,30 +1,16 @@
 # Performs a pattern search across a named file
 class Search
-  include Enumerable
-
   def initialize(pattern, filename)
     @pattern = pattern
     @filename = filename
   end
 
-  # Yield each line matching the search pattern
-  def each
-    each_with_index { |line, index| yield line }
-  end
-
-  # Yield each line, plus an index counter
-  def each_with_index
-    File.open(@filename) do |file|
-      file.each_line.each_with_index do |line, index|
-        yield [line, index] if line =~ /#{@pattern}/
-      end
-    end
-  end
-
   # Yield each line, plus a line number
   def each_with_line_number
-    each_with_index do |line, index|
-      yield [line, index + 1]
+    File.open(@filename) do |file|
+      file.each_line.each_with_index do |line, index|
+        yield [line, index + 1] if line =~ /#{@pattern}/
+      end
     end
   end
 end
