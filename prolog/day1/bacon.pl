@@ -49,19 +49,21 @@ starred(jack_nicholson, the_departed).
 starred(mark_wahlberg, the_departed).
 starred(martin_sheen, the_departed).
 
-one_degree(X, Y) :-
-  starred(X, Something),
-  starred(Y, Something),
-  \+(X=Y).
+starred_with(Actor, [SecondActor|Others]) :-
+  % one degree
+  (
+    length(Others, 0),
+    starred(Actor, Something),
+    starred(SecondActor, Something),
+    \+(Actor = SecondActor)
+  );
+  % 2+ degrees
+  (
+    starred_with(Actor, Others),
+    starred_with(SecondActor, Others),
+    \+(Actor = SecondActor)
+  ).
 
-two_degrees(X, Y) :-
-  one_degree(X, FOAF),
-  one_degree(Y, FOAF),
-  \+one_degree(X, Y),
-  \+(X=Y).
-
-three_degrees(X, Y) :-
-  two_degrees(X, FOAF),
-  one_degree(Y, FOAF),
-  \+two_degrees(X, Y),
-  \+(X=Y).
+degrees(X, Y, Degrees) :-
+  starred_with(X, [Y|Others]),
+  length(Others, Degrees - 1).
